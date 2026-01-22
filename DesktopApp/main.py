@@ -33,6 +33,34 @@ def dchpAtivado():
         gateway_label.grid_forget()
         gateway_input.grid_forget()
 
+def on_save():
+    data = {
+        "server_url": urlServer_input.get().strip(),
+        "collector_tag": tagColetor_input.get().strip(),
+        "network_type": rede_selecionada.get(),
+        "dhcp": bool(estado_dhcp.get()),
+        "ssid": nomeRede_input.get().strip(),
+        "password": senhaRede_input.get().strip(),
+        "ip_address": ipAddress_input.get().strip(),
+        "netmask": mascRede_input.get().strip(),
+        "gateway": gateway_input.get().strip()
+    }
+
+    pendrive_path = filedialog.askdirectory(title="Selecione um diretório")
+
+    if not pendrive_path:
+        return
+    
+    try:
+        from app_service import process_configuration
+        file_path = process_configuration(data, pendrive_path)
+
+        messagebox.showinfo("Sucesso", f"Configuração salva com sucesso!\n\n {file_path}")
+
+    except Exception as e:
+        messagebox.showerror("Erro", str(e))
+
+
 # Labels 
 title = tk.Label(window, text="SkaPin", font=("Arial", 16, "bold") )
 
@@ -65,7 +93,7 @@ mascRede_input = tk.Entry(window)
 gateway_label = tk.Label(window, text="Gateway")
 gateway_input = tk.Entry(window)
 
-btn_SavePendrive = tk.Button(window, text="Salvar no Pendrive")
+btn_SavePendrive = tk.Button(window, text="Salvar no Pendrive", command=on_save)
 
 # Grid
 title.grid(row=0, column=1)
